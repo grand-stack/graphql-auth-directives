@@ -1,0 +1,45 @@
+{
+  "name": "graphql-auth-directives",
+  "version": "1.0.0",
+  "description": "Add authorization to your GraphQL API using schema directives.",
+  "main": "./dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel src --presets babel-preset-env --out-dir dist",
+    "precommit": "lint-staged",
+    "prepublish": "npm run build",
+    "pretest": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grand-stack/graphql-auth-directives.git"
+  },
+  "devDependencies": {
+    "husky": "^1.1.2",
+    "lint-staged": "^7.3.0",
+    "prettier": "^1.13.5",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0"
+  },
+  "keywords": [
+    "GraphQL",
+    "authorization",
+    "neo4j"
+  ],
+  "author": "William Lyon",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/grand-stack/graphql-auth-directives/issues"
+  },
+  "homepage": "https://github.com/grand-stack/graphql-auth-directives#readme",
+  "lint-staged": {
+    "*.{js,json,css}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "dependencies": {
+    "graphql-tools": "^4.0.1",
+    "jsonwebtoken": "^8.3.0"
+  }
+}
