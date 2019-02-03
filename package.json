@@ -28,7 +28,8 @@
     "prettier": "^1.13.5",
     "nodemon": "^1.18.7",
     "ava": "^0.25.0",
-    "dotenv": "^6.2.0"
+    "dotenv": "^6.2.0",
+    "babel-register": "^6.26.0"
   },
   "keywords": [
     "GraphQL",
