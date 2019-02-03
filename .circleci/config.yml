@@ -6,6 +6,7 @@ jobs:
       - image: circleci/node:10-browsers
     steps:
       - checkout
+      - run: npm install
       - run:
           name: Start graphql in background
           command: ./node_modules/.bin/babel-node ./test/helpers/test-setup.js
