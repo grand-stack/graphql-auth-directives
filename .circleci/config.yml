@@ -1,7 +1,7 @@
 version: 2
 
 jobs:
-  test:
+  node10tests:
     docker:
       - image: circleci/node:10-browsers
     steps:
@@ -21,4 +21,4 @@ workflows:
   version: 2
   integration_test:
     jobs:
-      - test
+      - node10tests
