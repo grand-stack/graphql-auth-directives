@@ -10,12 +10,8 @@ jobs:
         name: Start graphql in background
         command: node -r babel-register ./test/test-setup.js
         background: true
-      - run:
-        name: wait for graphql
-        command: ./scripts/wait-for-graphql.sh
-      - run:
-        name: run tests
-        command: ./node_modules/.bin/ava test/*.js
+      - run: ./scripts/wait-for-graphql.sh
+      - run: ./node_modules/.bin/ava test/*.js
 
 workflows:
   version: 2
