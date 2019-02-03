@@ -1,7 +1,7 @@
 version: 2
 
 jobs:
-  build:
+  test:
     docker:
       - image: circleci/node:10-browsers
     steps:
@@ -16,3 +16,9 @@ jobs:
       - run:
         name: run tests
         command: ./node_modules/.bin/ava test/*.js
+
+workflows:
+  version: 2
+  integration_test:
+    jobs:
+      - test
