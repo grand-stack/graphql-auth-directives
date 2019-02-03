@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/grand-stack/graphql-auth-directives.svg?style=svg)](https://circleci.com/gh/grand-stack/graphql-auth-directives)
+
 # graphql-auth-directives
 
 Add authentication to your GraphQL API with schema directives.
