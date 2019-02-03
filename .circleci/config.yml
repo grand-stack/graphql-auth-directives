@@ -1,0 +1,18 @@
+version: 2
+
+jobs:
+  test:
+    docker:
+      - image: circleci/node:10-browsers
+    steps:
+      - checkout
+      - run:
+        name: Start graphql in background
+        command: node -r babel-register ./test/test-setup.js
+        background: true
+      - run:
+        name: wait for graphql
+        command: ./scripts/wait-for-graphql.sh
+      - run:
+        name: run tests
+        command: ./node_modules/.bin/ava test/*.js
