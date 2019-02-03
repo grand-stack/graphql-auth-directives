@@ -7,9 +7,9 @@ jobs:
     steps:
       - checkout
       - run:
-        name: Start graphql in background
-        command: node -r babel-register ./test/test-setup.js
-        background: true
+          name: Start graphql in background
+          command: node -r babel-register ./test/test-setup.js
+          background: true
       - run: ./scripts/wait-for-graphql.sh
       - run: ./node_modules/.bin/ava test/*.js
 
