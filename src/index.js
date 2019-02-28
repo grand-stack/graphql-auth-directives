@@ -21,8 +21,6 @@ const verifyAndDecodeToken = ({ context }) => {
   try {
     const id_token = token.replace("Bearer ", "");
     const JWT_SECRET = process.env.JWT_SECRET;
-    console.log("JWT SECRET");
-    console.log(JWT_SECRET);
 
     if (!JWT_SECRET) {
       throw new Error(
@@ -100,7 +98,7 @@ export class HasScopeDirective extends SchemaDirectiveVisitor {
           decoded["scope"] ||
           [];
 
-        if (expectedRoles.some(role => roles.indexOf(role) !== -1)) {
+        if (expectedScopes.some(role => scopes.indexOf(role) !== -1)) {
           return next(result, args, context, info);
         }
         throw new AuthorizationError({
@@ -133,12 +131,13 @@ export class HasRoleDirective extends SchemaDirectiveVisitor {
       const decoded = verifyAndDecodeToken({ context });
 
       // FIXME: override with env var
-      const roles =
-        decoded["Roles"] ||
-        decoded["roles"] ||
-        decoded["Role"] ||
-        decoded["role"] ||
-        [];
+      const roles = process.env.AUTH_DIRECTIVES_ROLE_KEY
+        ? decoded[process.env.AUTH_DIRECTIVES_ROLE_KEY] || []
+        : decoded["Roles"] ||
+          decoded["roles"] ||
+          decoded["Role"] ||
+          decoded["role"] ||
+          [];
 
       if (expectedRoles.some(role => roles.indexOf(role) !== -1)) {
         return next(result, args, context, info);
@@ -160,13 +159,13 @@ export class HasRoleDirective extends SchemaDirectiveVisitor {
       field.resolve = function(result, args, context, info) {
         const decoded = verifyAndDecodeToken({ context });
 
-        // FIXME: override w/ env var
-        const roles =
-          decoded["Roles"] ||
-          decoded["roles"] ||
-          decoded["Role"] ||
-          decoded["role"] ||
-          [];
+        const roles = process.env.AUTH_DIRECTIVES_ROLE_KEY
+          ? decoded[process.env.AUTH_DIRECTIVES_ROLE_KEY] || []
+          : decoded["Roles"] ||
+            decoded["roles"] ||
+            decoded["Role"] ||
+            decoded["role"] ||
+            [];
 
         if (expectedRoles.some(role => roles.indexOf(role) !== -1)) {
           return next(result, args, context, info);
