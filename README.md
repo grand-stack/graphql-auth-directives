@@ -24,10 +24,84 @@ const augmentedSchema = makeAugmentedSchema({
   typeDefs,
   schemaDirectives: {
     isAuthenticated: IsAuthenticatedDirective,
-    hasRole: HasRoleDirective
+    hasRole: HasRoleDirective,
+    hasScope: HasScopeDirective
   }
 });
 ```
+
+The `@hasRole`, `@hasScope`, and `@isAuthenticated` directives will now be available for use in your GraphQL schema:
+
+```
+type Query {
+    userById(userId: ID!): User @hasScope(scopes: ["User:Read"])
+    itemById(itemId: ID!): Item @hasScope(scopes: ["Item:Read"])
+}
+```
+
+Be sure to inject the request headers into the GraphQL resolver context. For example, with Apollo Server:
+
+```
+const server = new ApolloServer({
+  schema,
+  context: ({ req }) => {
+    return req;
+  }
+});
+```
+
+A JWT must then be included in each GraphQL request in the Authorization header. For example, with Apollo Client:
+
+```
+
+import { createHttpLink } from 'apollo-link-http';
+import { setContext } from 'apollo-link-context';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { ApolloClient } from 'apollo-client';
+
+
+const httpLink = createHttpLink({
+    uri: <YOUR_GRAPHQL_API_URI>
+});
+
+const authLink = setContext((_, { headers }) => {
+    const token = localStorage.getItem('id_token'); // here we are storing the JWT in localStorage
+    return {
+        headers: {
+            ...headers,
+            authorization: token ? `Bearer ${token}` : "",
+        }
+    }
+});
+
+const client = new ApolloClient({
+    link: authLink.concat(httpLink),
+    cache: new InMemoryCache()
+});
+```
+
+
+
+*Configure*
+Configuration is done via environment variables.
+
+(required)
+You must set the `JWT_SECRET` environment variable:
+
+```
+export JWT_SECRET=><YOUR_JWT_SECRET_KEY_HERE>
+```
+
+(optional)
+By default `@hasRole` will validate the `roles`, `role`, `Roles`, or `Role` claim (whichever is found first). You can override this by setting `AUTH_DIRECTIVES_ROLE_KEY` environment variable. For example, if your role claim is stored in the JWT like this
+
+```
+"https://grandstack.io/roles": [
+    "admin"
+]
+```
+
+set `export AUTH_DIRECTIVES_ROLE_KEY=https://grandstack.io/roles`
 
 ## Test JWTs
 
