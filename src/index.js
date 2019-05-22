@@ -1,4 +1,5 @@
 import { AuthorizationError } from "./errors";
+import { IncomingMessage } from "http";
 import * as jwt from "jsonwebtoken";
 import { SchemaDirectiveVisitor } from "graphql-tools";
 import {
@@ -9,15 +10,17 @@ import {
 } from "graphql";
 
 const verifyAndDecodeToken = ({ context }) => {
+  const req = context instanceof IncomingMessage ? context : (context.req || context.request);
+
   if (
-    !context ||
-    !context.headers ||
-    (!context.headers.authorization && !context.headers.Authorization)
+    !req ||
+    !req.headers ||
+    (!req.headers.authorization && !req.headers.Authorization)
   ) {
     throw new AuthorizationError({ message: "No authorization token." });
   }
 
-  const token = context.headers.authorization || context.headers.Authorization;
+  const token = req.headers.authorization || req.headers.Authorization;
   try {
     const id_token = token.replace("Bearer ", "");
     const JWT_SECRET = process.env.JWT_SECRET;
