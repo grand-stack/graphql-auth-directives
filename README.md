@@ -1,6 +1,6 @@
-[![CircleCI](https://circleci.com/gh/grand-stack/graphql-auth-directives.svg?style=svg)](https://circleci.com/gh/grand-stack/graphql-auth-directives)
-
 # graphql-auth-directives
+
+[![CircleCI](https://circleci.com/gh/grand-stack/graphql-auth-directives.svg?style=svg)](https://circleci.com/gh/grand-stack/graphql-auth-directives)
 
 Add authentication to your GraphQL API with schema directives.
 
@@ -12,14 +12,16 @@ Add authentication to your GraphQL API with schema directives.
 
 ## Quick start
 
-```
+```sh
 npm install --save graphql-auth-directives
 ```
 
 Then import the schema directives you'd like to use and attach them during your GraphQL schema construction. For example using [neo4j-graphql.js' `makeAugmentedSchema`](https://grandstack.io/docs/neo4j-graphql-js-api.html#makeaugmentedschemaoptions-graphqlschema):
 
-```
+
+```js
 import { IsAuthenticatedDirective, HasRoleDirective, HasScopeDirective } from "graphql-auth-directives";
+
 const augmentedSchema = makeAugmentedSchema({
   typeDefs,
   schemaDirectives: {
@@ -41,7 +43,7 @@ type Query {
 
 Be sure to inject the request headers into the GraphQL resolver context. For example, with Apollo Server:
 
-```
+```js
 const server = new ApolloServer({
   schema,
   context: ({ req }) => {
@@ -52,8 +54,7 @@ const server = new ApolloServer({
 
 A JWT must then be included in each GraphQL request in the Authorization header. For example, with Apollo Client:
 
-```
-
+```js
 import { createHttpLink } from 'apollo-link-http';
 import { setContext } from 'apollo-link-context';
 import { InMemoryCache } from 'apollo-cache-inmemory';
@@ -80,28 +81,31 @@ const client = new ApolloClient({
 });
 ```
 
+## Configure
 
-
-*Configure*
 Configuration is done via environment variables.
 
 (required)
 You must set the `JWT_SECRET` environment variable:
 
-```
+```sh
 export JWT_SECRET=><YOUR_JWT_SECRET_KEY_HERE>
 ```
 
 (optional)
 By default `@hasRole` will validate the `roles`, `role`, `Roles`, or `Role` claim (whichever is found first). You can override this by setting `AUTH_DIRECTIVES_ROLE_KEY` environment variable. For example, if your role claim is stored in the JWT like this
 
-```
+```sh
 "https://grandstack.io/roles": [
     "admin"
 ]
 ```
 
-set `export AUTH_DIRECTIVES_ROLE_KEY=https://grandstack.io/roles`
+Set:
+
+```sh
+export AUTH_DIRECTIVES_ROLE_KEY=https://grandstack.io/roles
+```
 
 ## Test JWTs
 
