@@ -18,8 +18,10 @@ npm install --save graphql-auth-directives
 
 Then import the schema directives you'd like to use and attach them during your GraphQL schema construction. For example using [neo4j-graphql.js' `makeAugmentedSchema`](https://grandstack.io/docs/neo4j-graphql-js-api.html#makeaugmentedschemaoptions-graphqlschema):
 
+
 ```js
-import { IsAuthenticatedDirective, HasRoleDirective } from "graphql-auth-directives";
+import { IsAuthenticatedDirective, HasRoleDirective, HasScopeDirective } from "graphql-auth-directives";
+
 const augmentedSchema = makeAugmentedSchema({
   typeDefs,
   schemaDirectives: {
