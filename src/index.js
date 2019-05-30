@@ -10,17 +10,22 @@ import {
 } from "graphql";
 
 const verifyAndDecodeToken = ({ context }) => {
-  const req = context instanceof IncomingMessage ? context : (context.req || context.request);
+  const req =
+    context instanceof IncomingMessage
+      ? context
+      : context.req || context.request;
 
   if (
-    !req ||
-    !req.headers ||
-    (!req.headers.authorization && !req.headers.Authorization)
+    (!req ||
+      !req.headers ||
+      (!req.headers.authorization && !req.headers.Authorization)) &&
+    (!req.cookies && !req.cookies.token)
   ) {
     throw new AuthorizationError({ message: "No authorization token." });
   }
 
-  const token = req.headers.authorization || req.headers.Authorization;
+  const token =
+    req.headers.authorization || req.headers.Authorization || req.cookies.token;
   try {
     const id_token = token.replace("Bearer ", "");
     const JWT_SECRET = process.env.JWT_SECRET;
