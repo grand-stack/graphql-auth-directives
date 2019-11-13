@@ -10,7 +10,10 @@ import {
 } from "graphql";
 
 const verifyAndDecodeToken = ({ context }) => {
-  const req = context instanceof IncomingMessage ? context : (context.req || context.request);
+  const req =
+    context instanceof IncomingMessage
+      ? context
+      : context.req || context.request;
 
   if (
     !req ||
@@ -36,9 +39,15 @@ const verifyAndDecodeToken = ({ context }) => {
 
     return decoded;
   } catch (err) {
-    throw new AuthorizationError({
-      message: "You are not authorized for this resource"
-    });
+    if (err.name === "TokenExpiredError") {
+      throw new AuthorizationError({
+        message: "Your token is expired"
+      });
+    } else {
+      throw new AuthorizationError({
+        message: "You are not authorized for this resource"
+      });
+    }
   }
 };
 
