@@ -85,8 +85,8 @@ const client = new ApolloClient({
 
 Configuration is done via environment variables.
 
-(required)
-You must set the `JWT_SECRET` environment variable:
+(optional)
+If you set the `JWT_SECRET` environment variable, any token recieved will be verified against the secret that is stored here. Otherwise tokens will be simply decoded and remain unverified:
 
 ```sh
 export JWT_SECRET=><YOUR_JWT_SECRET_KEY_HERE>

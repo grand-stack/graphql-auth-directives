@@ -26,15 +26,12 @@ const verifyAndDecodeToken = ({ context }) => {
     const JWT_SECRET = process.env.JWT_SECRET;
 
     if (!JWT_SECRET) {
-      throw new Error(
-        "No JWT secret set. Set environment variable JWT_SECRET to decode token."
-      );
+      return jwt.decode(id_token)
+    } else {
+      return jwt.verify(id_token, JWT_SECRET, {
+        algorithms: ["HS256", "RS256"]
+      });
     }
-    const decoded = jwt.verify(id_token, JWT_SECRET, {
-      algorithms: ["HS256", "RS256"]
-    });
-
-    return decoded;
   } catch (err) {
     throw new AuthorizationError({
       message: "You are not authorized for this resource"
