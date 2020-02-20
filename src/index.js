@@ -74,7 +74,7 @@ export class HasScopeDirective extends SchemaDirectiveVisitor {
         [];
 
       if (expectedScopes.some(scope => scopes.indexOf(scope) !== -1)) {
-        return next(result, args, context, info);
+        return next(result, args, { ...context, user: decoded }, info);
       }
 
       throw new AuthorizationError({
@@ -102,7 +102,7 @@ export class HasScopeDirective extends SchemaDirectiveVisitor {
           [];
 
         if (expectedScopes.some(role => scopes.indexOf(role) !== -1)) {
-          return next(result, args, context, info);
+          return next(result, args, { ...context, user: decoded }, info);
         }
         throw new AuthorizationError({
           message: "You are not authorized for this resource"
@@ -143,7 +143,7 @@ export class HasRoleDirective extends SchemaDirectiveVisitor {
           [];
 
       if (expectedRoles.some(role => roles.indexOf(role) !== -1)) {
-        return next(result, args, context, info);
+        return next(result, args, { ...context, user: decoded }, info);
       }
 
       throw new AuthorizationError({
@@ -171,7 +171,7 @@ export class HasRoleDirective extends SchemaDirectiveVisitor {
             [];
 
         if (expectedRoles.some(role => roles.indexOf(role) !== -1)) {
-          return next(result, args, context, info);
+          return next(result, args, { ...context, user: decoded }, info);
         }
         throw new AuthorizationError({
           message: "You are not authorized for this resource"
@@ -197,8 +197,8 @@ export class IsAuthenticatedDirective extends SchemaDirectiveVisitor {
       const next = field.resolve;
 
       field.resolve = function(result, args, context, info) {
-        verifyAndDecodeToken({ context }); // will throw error if not valid signed jwt
-        return next(result, args, context, info);
+        const decoded = verifyAndDecodeToken({ context }); // will throw error if not valid signed jwt
+        return next(result, args, { ...context, user: decoded }, info);
       };
     });
   }
@@ -207,8 +207,8 @@ export class IsAuthenticatedDirective extends SchemaDirectiveVisitor {
     const next = field.resolve;
 
     field.resolve = function(result, args, context, info) {
-      verifyAndDecodeToken({ context });
-      return next(result, args, context, info);
+      const decoded = verifyAndDecodeToken({ context });
+      return next(result, args, { ...context, user: decoded }, info);
     };
   }
 }
