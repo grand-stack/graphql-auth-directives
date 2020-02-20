@@ -85,7 +85,7 @@ export class HasScopeDirective extends SchemaDirectiveVisitor {
 
   visitObject(obj) {
     const fields = obj.getFields();
-    const expectedScopes = this.args.roles;
+    const expectedScopes = this.args.scopes;
 
     Object.keys(fields).forEach(fieldName => {
       const field = fields[fieldName];
