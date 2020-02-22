@@ -23,9 +23,9 @@ const verifyAndDecodeToken = ({ context }) => {
   const token = req.headers.authorization || req.headers.Authorization;
   try {
     const id_token = token.replace("Bearer ", "");
-    const JWT_SECRET = process.env.JWT_SECRET;
+    const {JWT_SECRET, JWT_NO_VERIFY} = process.env;
 
-    if (!JWT_SECRET) {
+    if (!JWT_SECRET && JWT_NO_VERIFY) {
       return jwt.decode(id_token)
     } else {
       return jwt.verify(id_token, JWT_SECRET, {
