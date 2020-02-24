@@ -76,6 +76,7 @@ test("No error with token", async t => {
       t.pass();
     })
     .catch(error => {
+      console.error(error)
       t.fail();
     });
 });

@@ -26,18 +26,15 @@ const verifyAndDecodeToken = ({ context }) => {
   const token = req.headers.authorization || req.headers.Authorization;
   try {
     const id_token = token.replace("Bearer ", "");
-    const JWT_SECRET = process.env.JWT_SECRET;
+    const {JWT_SECRET, JWT_NO_VERIFY} = process.env;
 
-    if (!JWT_SECRET) {
-      throw new Error(
-        "No JWT secret set. Set environment variable JWT_SECRET to decode token."
-      );
+    if (!JWT_SECRET && JWT_NO_VERIFY) {
+      return jwt.decode(id_token)
+    } else {
+      return jwt.verify(id_token, JWT_SECRET, {
+        algorithms: ["HS256", "RS256"]
+      });
     }
-    const decoded = jwt.verify(id_token, JWT_SECRET, {
-      algorithms: ["HS256", "RS256"]
-    });
-
-    return decoded;
   } catch (err) {
     if (err.name === "TokenExpiredError") {
       throw new AuthorizationError({

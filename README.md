@@ -86,10 +86,15 @@ const client = new ApolloClient({
 Configuration is done via environment variables.
 
 (required)
-You must set the `JWT_SECRET` environment variable:
+There are two variables to control how tokens are processed.
+If you would like the server to verify the tokens used in a request, you must provide the secret used to encode the token in the `JWT_SECRET` variable. Otherwise you will need to set `JWT_NO_VERIFY` to true.
 
 ```sh
-export JWT_SECRET=><YOUR_JWT_SECRET_KEY_HERE>
+export JWT_NO_VERIFY=true //Server does not have the secret, but will need to decode tokens
+```
+or
+```sh
+export JWT_SECRET=><YOUR_JWT_SECRET_KEY_HERE> //Server has the secret and will verify autheniticty
 ```
 
 (optional)
@@ -106,6 +111,20 @@ Set:
 ```sh
 export AUTH_DIRECTIVES_ROLE_KEY=https://grandstack.io/roles
 ```
+
+## Running Tests Locally
+
+1. create ./test/helpers/.env
+2. add relevant values
+3. run the test server
+```sh
+npx babel-node test/helpers/test-setup.js
+```
+4. run the tests
+```sh
+npx ava test/*.js
+```
+
 
 ## Test JWTs
 
