@@ -16,14 +16,16 @@ const verifyAndDecodeToken = ({ context }) => {
       : context.req || context.request;
 
   if (
-    !req ||
-    !req.headers ||
-    (!req.headers.authorization && !req.headers.Authorization)
+    (!req ||
+      !req.headers ||
+      (!req.headers.authorization && !req.headers.Authorization)) &&
+    (!req.cookies && !req.cookies.token)
   ) {
     throw new AuthorizationError({ message: "No authorization token." });
   }
 
-  const token = req.headers.authorization || req.headers.Authorization;
+  const token =
+    req.headers.authorization || req.headers.Authorization || req.cookies.token;
   try {
     const id_token = token.replace("Bearer ", "");
     const {JWT_SECRET, JWT_NO_VERIFY} = process.env;
