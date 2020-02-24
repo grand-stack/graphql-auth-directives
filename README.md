@@ -1,6 +1,6 @@
-[![CircleCI](https://circleci.com/gh/grand-stack/graphql-auth-directives.svg?style=svg)](https://circleci.com/gh/grand-stack/graphql-auth-directives)
-
 # graphql-auth-directives
+
+[![CircleCI](https://circleci.com/gh/grand-stack/graphql-auth-directives.svg?style=svg)](https://circleci.com/gh/grand-stack/graphql-auth-directives)
 
 Add authentication to your GraphQL API with schema directives.
 
@@ -12,14 +12,16 @@ Add authentication to your GraphQL API with schema directives.
 
 ## Quick start
 
-```
+```sh
 npm install --save graphql-auth-directives
 ```
 
 Then import the schema directives you'd like to use and attach them during your GraphQL schema construction. For example using [neo4j-graphql.js' `makeAugmentedSchema`](https://grandstack.io/docs/neo4j-graphql-js-api.html#makeaugmentedschemaoptions-graphqlschema):
 
-```
-import { IsAuthenticatedDirective, HasRoleDirective } from "graphql-auth-directives";
+
+```js
+import { IsAuthenticatedDirective, HasRoleDirective, HasScopeDirective } from "graphql-auth-directives";
+
 const augmentedSchema = makeAugmentedSchema({
   typeDefs,
   schemaDirectives: {
@@ -41,7 +43,7 @@ type Query {
 
 Be sure to inject the request headers into the GraphQL resolver context. For example, with Apollo Server:
 
-```
+```js
 const server = new ApolloServer({
   schema,
   context: ({ req }) => {
@@ -50,10 +52,17 @@ const server = new ApolloServer({
 });
 ```
 
-A JWT must then be included in each GraphQL request in the Authorization header. For example, with Apollo Client:
+In the case that the token was decoded with no errors the `context.user` will store the payload from the token
 
+```js
+me: (parent, args, context) => {
+      console.log(context.user.id);
+}
 ```
 
+A JWT must then be included in each GraphQL request in the Authorization header. For example, with Apollo Client:
+
+```js
 import { createHttpLink } from 'apollo-link-http';
 import { setContext } from 'apollo-link-context';
 import { InMemoryCache } from 'apollo-cache-inmemory';
@@ -80,28 +89,50 @@ const client = new ApolloClient({
 });
 ```
 
+## Configure
 
-
-*Configure*
 Configuration is done via environment variables.
 
 (required)
-You must set the `JWT_SECRET` environment variable:
+There are two variables to control how tokens are processed.
+If you would like the server to verify the tokens used in a request, you must provide the secret used to encode the token in the `JWT_SECRET` variable. Otherwise you will need to set `JWT_NO_VERIFY` to true.
 
+```sh
+export JWT_NO_VERIFY=true //Server does not have the secret, but will need to decode tokens
 ```
-export JWT_SECRET=><YOUR_JWT_SECRET_KEY_HERE>
+or
+```sh
+export JWT_SECRET=><YOUR_JWT_SECRET_KEY_HERE> //Server has the secret and will verify autheniticty
 ```
 
 (optional)
 By default `@hasRole` will validate the `roles`, `role`, `Roles`, or `Role` claim (whichever is found first). You can override this by setting `AUTH_DIRECTIVES_ROLE_KEY` environment variable. For example, if your role claim is stored in the JWT like this
 
-```
+```sh
 "https://grandstack.io/roles": [
     "admin"
 ]
 ```
 
-set `export AUTH_DIRECTIVES_ROLE_KEY=https://grandstack.io/roles`
+Set:
+
+```sh
+export AUTH_DIRECTIVES_ROLE_KEY=https://grandstack.io/roles
+```
+
+## Running Tests Locally
+
+1. create ./test/helpers/.env
+2. add relevant values
+3. run the test server
+```sh
+npx babel-node test/helpers/test-setup.js
+```
+4. run the tests
+```sh
+npx ava test/*.js
+```
+
 
 ## Test JWTs
 

@@ -1,4 +1,5 @@
 import { AuthorizationError } from "./errors";
+import { IncomingMessage } from "http";
 import * as jwt from "jsonwebtoken";
 import { SchemaDirectiveVisitor } from "graphql-tools";
 import {
@@ -9,33 +10,43 @@ import {
 } from "graphql";
 
 const verifyAndDecodeToken = ({ context }) => {
+  const req =
+    context instanceof IncomingMessage
+      ? context
+      : context.req || context.request;
+
   if (
-    !context ||
-    !context.headers ||
-    (!context.headers.authorization && !context.headers.Authorization)
+    (!req ||
+      !req.headers ||
+      (!req.headers.authorization && !req.headers.Authorization)) &&
+    (!req.cookies && !req.cookies.token)
   ) {
     throw new AuthorizationError({ message: "No authorization token." });
   }
 
-  const token = context.headers.authorization || context.headers.Authorization;
+  const token =
+    req.headers.authorization || req.headers.Authorization || req.cookies.token;
   try {
     const id_token = token.replace("Bearer ", "");
-    const JWT_SECRET = process.env.JWT_SECRET;
+    const {JWT_SECRET, JWT_NO_VERIFY} = process.env;
 
-    if (!JWT_SECRET) {
-      throw new Error(
-        "No JWT secret set. Set environment variable JWT_SECRET to decode token."
-      );
+    if (!JWT_SECRET && JWT_NO_VERIFY) {
+      return jwt.decode(id_token)
+    } else {
+      return jwt.verify(id_token, JWT_SECRET, {
+        algorithms: ["HS256", "RS256"]
+      });
     }
-    const decoded = jwt.verify(id_token, JWT_SECRET, {
-      algorithms: ["HS256", "RS256"]
-    });
-
-    return decoded;
   } catch (err) {
-    throw new AuthorizationError({
-      message: "You are not authorized for this resource"
-    });
+    if (err.name === "TokenExpiredError") {
+      throw new AuthorizationError({
+        message: "Your token is expired"
+      });
+    } else {
+      throw new AuthorizationError({
+        message: "You are not authorized for this resource"
+      });
+    }
   }
 };
 
@@ -71,7 +82,7 @@ export class HasScopeDirective extends SchemaDirectiveVisitor {
         [];
 
       if (expectedScopes.some(scope => scopes.indexOf(scope) !== -1)) {
-        return next(result, args, context, info);
+        return next(result, args, { ...context, user: decoded }, info);
       }
 
       throw new AuthorizationError({
@@ -82,7 +93,7 @@ export class HasScopeDirective extends SchemaDirectiveVisitor {
 
   visitObject(obj) {
     const fields = obj.getFields();
-    const expectedScopes = this.args.roles;
+    const expectedScopes = this.args.scopes;
 
     Object.keys(fields).forEach(fieldName => {
       const field = fields[fieldName];
@@ -99,7 +110,7 @@ export class HasScopeDirective extends SchemaDirectiveVisitor {
           [];
 
         if (expectedScopes.some(role => scopes.indexOf(role) !== -1)) {
-          return next(result, args, context, info);
+          return next(result, args, { ...context, user: decoded }, info);
         }
         throw new AuthorizationError({
           message: "You are not authorized for this resource"
@@ -140,7 +151,7 @@ export class HasRoleDirective extends SchemaDirectiveVisitor {
           [];
 
       if (expectedRoles.some(role => roles.indexOf(role) !== -1)) {
-        return next(result, args, context, info);
+        return next(result, args, { ...context, user: decoded }, info);
       }
 
       throw new AuthorizationError({
@@ -168,7 +179,7 @@ export class HasRoleDirective extends SchemaDirectiveVisitor {
             [];
 
         if (expectedRoles.some(role => roles.indexOf(role) !== -1)) {
-          return next(result, args, context, info);
+          return next(result, args, { ...context, user: decoded }, info);
         }
         throw new AuthorizationError({
           message: "You are not authorized for this resource"
@@ -194,8 +205,8 @@ export class IsAuthenticatedDirective extends SchemaDirectiveVisitor {
       const next = field.resolve;
 
       field.resolve = function(result, args, context, info) {
-        verifyAndDecodeToken({ context }); // will throw error if not valid signed jwt
-        return next(result, args, context, info);
+        const decoded = verifyAndDecodeToken({ context }); // will throw error if not valid signed jwt
+        return next(result, args, { ...context, user: decoded }, info);
       };
     });
   }
@@ -204,8 +215,8 @@ export class IsAuthenticatedDirective extends SchemaDirectiveVisitor {
     const next = field.resolve;
 
     field.resolve = function(result, args, context, info) {
-      verifyAndDecodeToken({ context });
-      return next(result, args, context, info);
+      const decoded = verifyAndDecodeToken({ context });
+      return next(result, args, { ...context, user: decoded }, info);
     };
   }
 }
