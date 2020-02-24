@@ -52,6 +52,14 @@ const server = new ApolloServer({
 });
 ```
 
+In the case that the token was decoded with no errors the `context.user` will store the payload from the token
+
+```js
+me: (parent, args, context) => {
+      console.log(context.user.id);
+}
+```
+
 A JWT must then be included in each GraphQL request in the Authorization header. For example, with Apollo Client:
 
 ```js
