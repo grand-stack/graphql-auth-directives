@@ -1,15 +1,15 @@
 // TODO: will need to set appropriate env vars
 
-import { ApolloServer } from "apollo-server";
-import { makeExecutableSchema } from "graphql-tools";
+const { ApolloServer } = require("apollo-server");
+const { makeExecutableSchema } = require("graphql-tools");
 
-import {
+const {
   IsAuthenticatedDirective,
   HasRoleDirective,
   HasScopeDirective
-} from "../../src/index";
+} = require("../../src/index");
 
-import dotenv from "dotenv";
+const dotenv = require("dotenv");
 
 dotenv.config();
 

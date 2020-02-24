@@ -1,11 +1,11 @@
-import test from "ava";
+const test = require("ava");
 
-import { ApolloClient } from "apollo-client";
-import { HttpLink } from "apollo-link-http";
-import { InMemoryCache } from "apollo-cache-inmemory";
+const { ApolloClient } = require("apollo-client");
+const { HttpLink } = require("apollo-link-http");
+const { InMemoryCache } = require("apollo-cache-inmemory");
 
-import gql from "graphql-tag";
-import fetch from "node-fetch";
+const gql = require("graphql-tag");
+const fetch = require("node-fetch");
 
 let client;
 
@@ -76,7 +76,7 @@ test("No error with token", async t => {
       t.pass();
     })
     .catch(error => {
-      console.error(error)
+      console.error(error);
       t.fail();
     });
 });
