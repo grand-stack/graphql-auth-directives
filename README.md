@@ -102,7 +102,7 @@ export JWT_NO_VERIFY=true //Server does not have the secret, but will need to de
 ```
 or
 ```sh
-export JWT_SECRET=><YOUR_JWT_SECRET_KEY_HERE> //Server has the secret and will verify autheniticty
+export JWT_SECRET=><YOUR_JWT_SECRET_KEY_HERE> //Server has the secret and will verify authenticity
 ```
 
 (optional)
