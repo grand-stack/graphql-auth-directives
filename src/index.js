@@ -28,10 +28,10 @@ const verifyAndDecodeToken = ({ context }) => {
     req.headers.authorization || req.headers.Authorization || req.cookies.token;
   try {
     const id_token = token.replace("Bearer ", "");
-    const {JWT_SECRET, JWT_NO_VERIFY} = process.env;
+    const { JWT_SECRET, JWT_NO_VERIFY } = process.env;
 
     if (!JWT_SECRET && JWT_NO_VERIFY) {
-      return jwt.decode(id_token)
+      return jwt.decode(id_token);
     } else {
       return jwt.verify(id_token, JWT_SECRET, {
         algorithms: ["HS256", "RS256"]
@@ -48,6 +48,15 @@ const verifyAndDecodeToken = ({ context }) => {
       });
     }
   }
+};
+
+const useDefaultFieldResolverIfNotDefined = fieldResolver => {
+  if (typeof fieldResolver === "undefined") {
+    return function(result, args, context, info) {
+      return result[info.fieldName];
+    };
+  }
+  return fieldResolver;
 };
 
 export class HasScopeDirective extends SchemaDirectiveVisitor {
@@ -67,7 +76,7 @@ export class HasScopeDirective extends SchemaDirectiveVisitor {
   // used for example, with Query and Mutation fields
   visitFieldDefinition(field) {
     const expectedScopes = this.args.scopes;
-    const next = field.resolve;
+    const next = useDefaultFieldResolverIfNotDefined(field.resolve);
 
     // wrap resolver with auth check
     field.resolve = function(result, args, context, info) {
@@ -136,7 +145,7 @@ export class HasRoleDirective extends SchemaDirectiveVisitor {
 
   visitFieldDefinition(field) {
     const expectedRoles = this.args.roles;
-    const next = field.resolve;
+    const next = useDefaultFieldResolverIfNotDefined(field.resolve);
 
     field.resolve = function(result, args, context, info) {
       const decoded = verifyAndDecodeToken({ context });
@@ -202,7 +211,7 @@ export class IsAuthenticatedDirective extends SchemaDirectiveVisitor {
 
     Object.keys(fields).forEach(fieldName => {
       const field = fields[fieldName];
-      const next = field.resolve;
+      const next = useDefaultFieldResolverIfNotDefined(field.resolve);
 
       field.resolve = function(result, args, context, info) {
         const decoded = verifyAndDecodeToken({ context }); // will throw error if not valid signed jwt
@@ -212,7 +221,7 @@ export class IsAuthenticatedDirective extends SchemaDirectiveVisitor {
   }
 
   visitFieldDefinition(field) {
-    const next = field.resolve;
+    const next = useDefaultFieldResolverIfNotDefined(field.resolve);
 
     field.resolve = function(result, args, context, info) {
       const decoded = verifyAndDecodeToken({ context });
