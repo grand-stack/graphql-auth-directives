@@ -1,7 +1,7 @@
 const test = require("ava");
 
 const { ApolloClient } = require("apollo-client");
-const { HttpLink } = require("apollo-link-http");
+const { createHttpLink } = require("apollo-link-http");
 const { InMemoryCache } = require("apollo-cache-inmemory");
 
 const gql = require("graphql-tag");
@@ -15,7 +15,7 @@ const headers = {
 
 test.before(() => {
   client = new ApolloClient({
-    link: new HttpLink({ uri: "http://localhost:3000", fetch, headers }),
+    link: createHttpLink({ uri: "http://localhost:3000", fetch, headers }),
     cache: new InMemoryCache()
   });
 });
@@ -24,7 +24,7 @@ test("Fail if no auth token", async t => {
   t.plan(1);
 
   const client = new ApolloClient({
-    link: new HttpLink({ uri: "http://localhost:3000", fetch }),
+    link: createHttpLink({ uri: "http://localhost:3000", fetch }),
     cache: new InMemoryCache()
   });
 
@@ -40,7 +40,7 @@ test("Fail if no auth token", async t => {
       `
     })
     .then(data => {
-      t.fail("AuthorizationError should be throw");
+      t.fail("AuthorizationError should be thrown");
     })
     .catch(error => {
       t.pass();
@@ -56,7 +56,7 @@ test("No error with token", async t => {
   };
 
   const client = new ApolloClient({
-    link: new HttpLink({ uri: "http://localhost:3000", fetch, headers }),
+    link: createHttpLink({ uri: "http://localhost:3000", fetch, headers }),
     cache: new InMemoryCache()
   });
 
@@ -91,7 +91,7 @@ test("Mutation resolver is not called when Auth fails", async t => {
   };
 
   const client = new ApolloClient({
-    link: new HttpLink({ uri: "http://localhost:3000", fetch, headers }),
+    link: createHttpLink({ uri: "http://localhost:3000", fetch, headers }),
     cache: new InMemoryCache()
   });
 

@@ -114,6 +114,6 @@ const server = new ApolloServer({
   }
 });
 
-server.listen(3000, "0.0.0.0").then(({ url }) => {
+server.listen(3000).then(({ url }) => {
   console.log(`GraphQL server ready at ${url}`);
 });
