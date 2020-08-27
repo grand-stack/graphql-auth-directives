@@ -24,7 +24,7 @@
     "apollo-cache-inmemory": "^1.4.2",
     "apollo-client": "^2.4.12",
     "apollo-link-http": "^1.5.11",
-    "apollo-server": "^2.2.5",
+    "apollo-server": "^2.16.1",
     "ava": "^3.4.0",
     "dotenv": "^6.2.0",
     "husky": "^1.1.2",
