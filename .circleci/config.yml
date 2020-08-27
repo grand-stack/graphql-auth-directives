@@ -10,10 +10,10 @@ jobs:
       - run: npm install graphql
       - run:
           name: Start graphql in background
-          command: ./node_modules/.bin/babel-node ./test/helpers/test-setup.js
+          command: npm run start-test-setup
           background: true
       - run: ./scripts/wait-for-graphql.sh
-      - run: ./node_modules/.bin/ava test/*.js
+      - run: npm run test
 
 workflows:
   version: 2
