@@ -7,7 +7,6 @@ jobs:
     steps:
       - checkout
       - run: npm install
-      - run: npm install graphql
       - run:
           name: Start graphql in background
           command: npm run start-test-setup
