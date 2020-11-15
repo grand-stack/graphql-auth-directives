@@ -1,7 +1,7 @@
 {
-  "name": "graphql-auth-directives",
-  "version": "2.2.0",
-  "description": "Add authorization to your GraphQL API using schema directives.",
+  "name": "@aitor3ml/graphql-auth-directives",
+  "version": "2.2.2",
+  "description": "Add authorization to your GraphQL API using schema directives. Forked https://github.com/grand-stack/graphql-auth-directives.git",
   "main": "./dist/index.js",
   "scripts": {
     "start": "nodemon ./examples/index.js --exec babel-node -e js",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/grand-stack/graphql-auth-directives.git"
+    "url": "git+https://github.com/aitor3ml-contrib/graphql-auth-directives"
   },
   "devDependencies": {
     "@babel/cli": "^7.7.0",
@@ -37,12 +37,12 @@
     "authorization",
     "neo4j"
   ],
-  "author": "William Lyon",
+  "author": "Aitor Martin",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/grand-stack/graphql-auth-directives/issues"
+    "url": "https://github.com/aitor3ml-contrib/graphql-auth-directives/issues"
   },
-  "homepage": "https://github.com/grand-stack/graphql-auth-directives#readme",
+  "homepage": "https://github.com/aitor3ml-contrib/graphql-auth-directives#readme",
   "lint-staged": {
     "*.{js,json,css}": [
       "prettier --write",
