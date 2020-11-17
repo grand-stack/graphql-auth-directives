@@ -17,9 +17,9 @@ const verifyAndDecodeToken = ({ context }) => {
 
   if (
     !req ||
-    !req.headers ||
-    (!req.headers.authorization && !req.headers.Authorization) ||
-    (!req && !req.cookies && !req.cookies.token)
+    ((!req.headers ||
+      (!req.headers.authorization && !req.headers.Authorization)) &&
+      (!req.cookies || !req.cookies.token))
   ) {
     throw new AuthorizationError({ message: "No authorization token." });
   }
