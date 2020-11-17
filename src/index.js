@@ -88,7 +88,10 @@ export class HasScopeDirective extends SchemaDirectiveVisitor {
       }
 
       throw new AuthorizationError({
-        message: "You are not authorized for this resource"
+        message:
+          "You are not authorized for this resource (expectedScopes:" +
+          expectedScopes +
+          "):"
       });
     };
   }
@@ -117,7 +120,10 @@ export class HasScopeDirective extends SchemaDirectiveVisitor {
           return next(result, args, { ...context, user: decoded }, info);
         }
         throw new AuthorizationError({
-          message: "You are not authorized for this resource"
+          message:
+            "You are not authorized for this resource (expectedScopes:" +
+            expectedScopes +
+            ")"
         });
       };
     });
@@ -158,7 +164,10 @@ export class HasRoleDirective extends SchemaDirectiveVisitor {
       }
 
       throw new AuthorizationError({
-        message: "You are not authorized for this resource"
+        message:
+          "You are not authorized for this resource (expectedRoles:" +
+          expectedRoles +
+          ")"
       });
     };
   }
@@ -185,7 +194,10 @@ export class HasRoleDirective extends SchemaDirectiveVisitor {
           return next(result, args, { ...context, user: decoded }, info);
         }
         throw new AuthorizationError({
-          message: "You are not authorized for this resource"
+          message:
+            "You are not authorized for this resource (expectedRoles:" +
+            expectedRoles +
+            ")"
         });
       };
     });
