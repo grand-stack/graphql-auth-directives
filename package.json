@@ -1,6 +1,6 @@
 {
   "name": "@aitor3ml/graphql-auth-directives",
-  "version": "2.2.3",
+  "version": "2.2.4",
   "description": "Add authorization to your GraphQL API using schema directives. Forked https://github.com/grand-stack/graphql-auth-directives.git",
   "main": "./dist/index.js",
   "scripts": {
