@@ -83,7 +83,10 @@ export class HasScopeDirective extends SchemaDirectiveVisitor {
           decoded["scope"] ||
           [];
 
-      if (expectedScopes.some(scope => scopes.indexOf(scope) !== -1)) {
+      if (
+        expectedScopes.some(scope => scopes.indexOf(scope) !== -1) ||
+        process.env.NOSCOPECHECK == "true"
+      ) {
         return next(result, args, { ...context, user: decoded }, info);
       }
 
@@ -116,7 +119,10 @@ export class HasScopeDirective extends SchemaDirectiveVisitor {
             decoded["scope"] ||
             [];
 
-        if (expectedScopes.some(role => scopes.indexOf(role) !== -1)) {
+        if (
+          expectedScopes.some(role => scopes.indexOf(role) !== -1) ||
+          process.env.NOSCOPECHECK == "true"
+        ) {
           return next(result, args, { ...context, user: decoded }, info);
         }
         throw new AuthorizationError({
@@ -159,7 +165,10 @@ export class HasRoleDirective extends SchemaDirectiveVisitor {
           decoded["role"] ||
           [];
 
-      if (expectedRoles.some(role => roles.indexOf(role) !== -1)) {
+      if (
+        expectedRoles.some(role => roles.indexOf(role) !== -1) ||
+        process.env.NOROLECHECK == "true"
+      ) {
         return next(result, args, { ...context, user: decoded }, info);
       }
 
@@ -190,7 +199,10 @@ export class HasRoleDirective extends SchemaDirectiveVisitor {
             decoded["role"] ||
             [];
 
-        if (expectedRoles.some(role => roles.indexOf(role) !== -1)) {
+        if (
+          expectedRoles.some(role => roles.indexOf(role) !== -1) ||
+          process.env.NOROLECHECK == "true"
+        ) {
           return next(result, args, { ...context, user: decoded }, info);
         }
         throw new AuthorizationError({
