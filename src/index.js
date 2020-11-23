@@ -21,6 +21,7 @@ const verifyAndDecodeToken = ({ context }) => {
       (!req.headers.authorization && !req.headers.Authorization)) &&
       (!req.cookies || !req.cookies.token))
   ) {
+    context.req.res.status(400);
     throw new AuthorizationError({ message: "No authorization token." });
   }
 
@@ -39,10 +40,12 @@ const verifyAndDecodeToken = ({ context }) => {
     }
   } catch (err) {
     if (err.name === "TokenExpiredError") {
+      context.req.res.status(401);
       throw new AuthorizationError({
         message: "Your token is expired"
       });
     } else {
+      context.req.res.status(403);
       throw new AuthorizationError({
         message: "You are not authorized for this resource"
       });
@@ -90,6 +93,7 @@ export class HasScopeDirective extends SchemaDirectiveVisitor {
         return next(result, args, { ...context, user: decoded }, info);
       }
 
+      context.req.res.status(403);
       throw new AuthorizationError({
         message:
           "You are not authorized for this resource (expectedScopes:" +
@@ -125,6 +129,7 @@ export class HasScopeDirective extends SchemaDirectiveVisitor {
         ) {
           return next(result, args, { ...context, user: decoded }, info);
         }
+        context.req.res.status(403);
         throw new AuthorizationError({
           message:
             "You are not authorized for this resource (expectedScopes:" +
@@ -172,6 +177,7 @@ export class HasRoleDirective extends SchemaDirectiveVisitor {
         return next(result, args, { ...context, user: decoded }, info);
       }
 
+      context.req.res.status(403);
       throw new AuthorizationError({
         message:
           "You are not authorized for this resource (expectedRoles:" +
@@ -205,6 +211,7 @@ export class HasRoleDirective extends SchemaDirectiveVisitor {
         ) {
           return next(result, args, { ...context, user: decoded }, info);
         }
+        context.req.res.status(403);
         throw new AuthorizationError({
           message:
             "You are not authorized for this resource (expectedRoles:" +
