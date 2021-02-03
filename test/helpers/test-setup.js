@@ -13,7 +13,7 @@ const dotenv = require("dotenv");
 
 dotenv.config();
 
-export const typeDefs = `
+const typeDefs = `
 
 directive @hasScope(scopes: [String]) on OBJECT | FIELD_DEFINITION
 directive @hasRole(roles: [Role]) on OBJECT | FIELD_DEFINITION

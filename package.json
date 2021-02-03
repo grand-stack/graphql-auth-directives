@@ -5,7 +5,7 @@
   "main": "./dist/index.js",
   "scripts": {
     "start": "nodemon ./examples/index.js --exec babel-node -e js",
-    "start-test-setup": "nodemon ./test/helpers/test-setup.js --exec babel-node -e js",
+    "start-test-setup": "babel-node ./test/helpers/test-setup.js",
     "test": "ava test/*.js",
     "build": "babel src --out-dir dist",
     "precommit": "lint-staged",
