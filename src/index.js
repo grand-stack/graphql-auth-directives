@@ -50,6 +50,15 @@ const verifyAndDecodeToken = ({ context }) => {
   }
 };
 
+const useDefaultFieldResolverIfNotDefined = fieldResolver => {
+  if (typeof fieldResolver === "undefined") {
+    return function(result, args, context, info) {
+      return result[info.fieldName];
+    };
+  }
+  return fieldResolver;
+};
+
 export class HasScopeDirective extends SchemaDirectiveVisitor {
   static getDirectiveDeclaration(directiveName, schema) {
     return new GraphQLDirective({
@@ -67,7 +76,7 @@ export class HasScopeDirective extends SchemaDirectiveVisitor {
   // used for example, with Query and Mutation fields
   visitFieldDefinition(field) {
     const expectedScopes = this.args.scopes;
-    const next = field.resolve;
+    const next = useDefaultFieldResolverIfNotDefined(field.resolve);
 
     // wrap resolver with auth check
     field.resolve = function(result, args, context, info) {
@@ -140,7 +149,7 @@ export class HasRoleDirective extends SchemaDirectiveVisitor {
 
   visitFieldDefinition(field) {
     const expectedRoles = this.args.roles;
-    const next = field.resolve;
+    const next = useDefaultFieldResolverIfNotDefined(field.resolve);
 
     field.resolve = function(result, args, context, info) {
       const decoded = verifyAndDecodeToken({ context });
@@ -205,7 +214,7 @@ export class IsAuthenticatedDirective extends SchemaDirectiveVisitor {
 
     Object.keys(fields).forEach(fieldName => {
       const field = fields[fieldName];
-      const next = field.resolve;
+      const next = useDefaultFieldResolverIfNotDefined(field.resolve);
 
       field.resolve = function(result, args, context, info) {
         const decoded = verifyAndDecodeToken({ context }); // will throw error if not valid signed jwt
@@ -215,7 +224,7 @@ export class IsAuthenticatedDirective extends SchemaDirectiveVisitor {
   }
 
   visitFieldDefinition(field) {
-    const next = field.resolve;
+    const next = useDefaultFieldResolverIfNotDefined(field.resolve);
 
     field.resolve = function(result, args, context, info) {
       const decoded = verifyAndDecodeToken({ context });
