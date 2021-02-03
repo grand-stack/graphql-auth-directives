@@ -17,7 +17,7 @@
     "url": "git+https://github.com/grand-stack/graphql-auth-directives.git"
   },
   "devDependencies": {
-    "@babel/cli": "^7.7.0",
+    "@babel/cli": "^7.12.13",
     "@babel/core": "^7.7.2",
     "@babel/node": "^7.7.0",
     "@babel/preset-env": "^7.7.1",
